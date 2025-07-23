@@ -61,6 +61,7 @@ const {
   extractHighestSearchVolumeKeyword,
   getHigestPerformingCompetitors,
   getCompetitorKeywords,
+  getLocationCode
 } = require("./dataforseo");
 
 const {
@@ -138,14 +139,14 @@ async function main(
 
 
     // console.log(folder)
-
+    const locationCode = await getLocationCode("https://squeegeedetail.com")
     const highestRankingKeyword = await extractHighestSearchVolumeKeyword(
       auditBusinessUrl
     );
 
     if (highestRankingKeyword) {
       console.log("Returned highest ranking keyword:::", highestRankingKeyword);
-      competitor = await getHigestPerformingCompetitors(highestRankingKeyword);
+      competitor = await getHigestPerformingCompetitors(highestRankingKeyword,auditBusinessUrl);
     }
     console.log("Returned Competitor:::", competitor);
     if (competitor) {

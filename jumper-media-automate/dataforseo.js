@@ -98,7 +98,7 @@ async function getLocationCode(rawURL) {
 
 async function extractHighestSearchVolumeKeyword(rawUrl) {
   const axios = require("axios");
-  const locationCode = await getLocationCode(rawUrl);
+  // const locationCode = await getLocationCode(rawUrl);
   return await axios({
     method: "post",
     url: `${domain}/dataforseo_labs/google/keywords_for_site/live`,
@@ -137,7 +137,7 @@ async function extractHighestSearchVolumeKeyword(rawUrl) {
     });
 }
 
-async function getHigestPerformingCompetitors(rankingKeyword, rawURL, locationCode) {
+async function getHigestPerformingCompetitors(rankingKeyword, rawURL, locationCode=2840) {
   const axios = require("axios");
 
   try {
@@ -226,7 +226,7 @@ async function getHigestPerformingCompetitors(rankingKeyword, rawURL, locationCo
 }
 
 
-async function getCompetitorKeywords(competitorURL,locationCode) {
+async function getCompetitorKeywords(competitorURL,locationCode=2840) {
   const axios = require("axios");
   return await axios({
     method: "post",
