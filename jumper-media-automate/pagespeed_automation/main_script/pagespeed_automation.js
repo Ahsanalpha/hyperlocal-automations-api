@@ -10,7 +10,8 @@ const axios = require("axios");
 const fs = require("fs").promises;
 const path = require("path");
 const readline = require("readline");
-const {appendToLogReport} = require("../../processing_report/process_report")
+const {appendToLogReport} = require("../../processing_report/process_report");
+const getChromeExecutablePath = require('../../utils/detectChromePath')
 
 class PageSpeedAutomation {
   constructor() {
@@ -44,10 +45,10 @@ class PageSpeedAutomation {
    * Setup Puppeteer browser with appropriate options
    */
   async setupBrowser(headless = false) {
+    const chromePath = getChromeExecutablePath();
     console.log("🚀 Launching browser...");
     this.browser = await puppeteer.launch({
-      executablePath: process.env.CHROME_PATH,
-      // headless: headless ? "new" : false,
+      executablePath: chromePath,
       headless: false,
       args: [
         "--no-sandbox",

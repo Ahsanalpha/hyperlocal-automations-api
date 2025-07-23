@@ -106,67 +106,70 @@ async function main(
   const process_report = createJsonLogFile(businessName);
   try {
 
-    folder = await createGoogleDriveFolder(businessName);
+    // folder = await createGoogleDriveFolder(businessName);
 
-    console.log("_______________________rich_script______________________\n");
-    rich_url = await InitializeRichResultsScript(businessUrl);
+    // console.log("_______________________rich_script______________________\n");
+    // rich_url = await InitializeRichResultsScript(businessUrl);
 
     // console.log("_______________________Internal_all.csv_____________________________\n")
-    removingFiles(process.env.SCREAM_FROG_CSV_FILE);
-    await runScreamingFrog(businessUrl);
+    // removingFiles(process.env.SCREAM_FROG_CSV_FILE);
+    // await runScreamingFrog(businessUrl);
+
 
     // console.log("_______________________Response Codes:Internal & External:Client Error (4xx) Inlinks_____________________________\n")
-    removingFiles("client_error_(4xx)_inlinks.csv");
-    await runScreamingFrog(
-      businessUrl,
-      "Response Codes:Internal & External:Client Error (4xx) Inlinks",
-      "bulk-export"
-    );
+    // removingFiles("client_error_(4xx)_inlinks.csv");
+    // await runScreamingFrog(
+    //   businessUrl,
+    //   "Response Codes:Internal & External:Client Error (4xx) Inlinks",
+    //   "bulk-export"
+    // );
 
     // console.log("_______________________Response Codes:Redirection (3xx)_____________________________\n")
-    removingFiles("response_codes_redirection_(3xx).csv");
-    await runScreamingFrog(businessUrl, "Response Codes:Redirection (3xx)");
+    // removingFiles("response_codes_redirection_(3xx).csv");
+    // await runScreamingFrog(businessUrl, "Response Codes:Redirection (3xx)");
 
-    if (checkFileExistence(process.env.SCREAM_FROG_CSV_FILE)) {
-      sheetId = await createGoogleSheetFile(
-        businessUrl,
-        process.env.SCREAM_FROG_CSV_FILE,
-        folder?.id
-      );
-    }
+    // if (checkFileExistence(process.env.SCREAM_FROG_CSV_FILE)) {
+    //   sheetId = await createGoogleSheetFile(
+    //     businessUrl,
+    //     process.env.SCREAM_FROG_CSV_FILE,
+    //     folder?.id
+    //   );
+    // }
 
 
     // console.log(folder)
 
-    // const highestRankingKeyword = await extractHighestSearchVolumeKeyword(
-    //   auditBusinessUrl
-    // );
+    const highestRankingKeyword = await extractHighestSearchVolumeKeyword(
+      auditBusinessUrl
+    );
 
-    // if (highestRankingKeyword) {
-    //   console.log("Returned highest ranking keyword:::", highestRankingKeyword);
-    //   competitor = await getHigestPerformingCompetitors(highestRankingKeyword);
-    // }
-    // console.log("Returned Competitor:::", competitor);
-    // if (competitor) {
-    //   competitorKeywords = await getCompetitorKeywords(competitor);
-    //   console.log("Returned competitor keywords:::", competitorKeywords);
-    // }
-    // // storing competitor_comparison table
-    // if (sheetId) {
-    //   await storeCSVInGoogleSheet(
-    //     sheetId,
-    //     "Competitor_Comparison.csv",
-    //     "Competitor_Comparison.csv"
-    //   );
-    //   const returnedURL = await storeCSVInGoogleSheet(
-    //     sheetId,
-    //     "Keyword_Research.csv",
-    //     "Keyword_Research.csv"
-    //   );
-    //   console.log("Returned Competitor Comparison sheet URL:::", returnedURL);
-    // }
+    if (highestRankingKeyword) {
+      console.log("Returned highest ranking keyword:::", highestRankingKeyword);
+      competitor = await getHigestPerformingCompetitors(highestRankingKeyword);
+    }
+    console.log("Returned Competitor:::", competitor);
+    if (competitor) {
+      competitorKeywords = await getCompetitorKeywords(competitor);
+      console.log("Returned competitor keywords:::", competitorKeywords);
+    }
 
-    // console.log("______________________________cleanup______________\n");
+    return 
+    // storing competitor_comparison table
+    if (sheetId) {
+      await storeCSVInGoogleSheet(
+        sheetId,
+        "Competitor_Comparison.csv",
+        "Competitor_Comparison.csv"
+      );
+      const returnedURL = await storeCSVInGoogleSheet(
+        sheetId,
+        "Keyword_Research.csv",
+        "Keyword_Research.csv"
+      );
+      console.log("Returned Competitor Comparison sheet URL:::", returnedURL);
+    }
+
+    console.log("______________________________cleanup______________\n");
 
     if (sheetId && checkFileExistence(process.env.SCREAM_FROG_CSV_FILE)) {
       cleanup_data = await cleanup(
@@ -211,36 +214,36 @@ async function main(
         "_____________________________Cannibalization end___________________\n"
       );
     }
-    // //this is very useful because it generate gbp_output_data/gbp_enchanced.csv
+    //this is very useful because it generate gbp_output_data/gbp_enchanced.csv
     //     console.log("_____________________________Scraping start___________________\n")
     // await InitializeEnhancedGBPScraper()
     //     console.log("_____________________________Scraping end___________________\n")
 
-    await auditIntroductionDocx(doc, businessName, businessUrl); //todo need to automate
+    // await auditIntroductionDocx(doc, businessName, businessUrl); //todo need to automate
 
-    await auditKWResearchDocx(doc, businessName, businessUrl); //todo need to automate
+    // await auditKWResearchDocx(doc, businessName, businessUrl); //todo need to automate
 
-    await auditTechnicalSEODocx(doc, businessName, businessUrl); //todo need to automate
+    // await auditTechnicalSEODocx(doc, businessName, businessUrl); //todo need to automate
 
-    await auditOnPageSEODocx(doc, businessName, businessUrl); //todo need to automate
+    // await auditOnPageSEODocx(doc, businessName, businessUrl); //todo need to automate
 
-    await auditOffPageSEODocx(doc, businessName, businessUrl); //todo need to automate
+    // await auditOffPageSEODocx(doc, businessName, businessUrl); //todo need to automate
 
-    await auditGBPDocx(doc, businessName, businessUrl); //todo need to automate
+    // await auditGBPDocx(doc, businessName, businessUrl); //todo need to automate
   } catch (error) {
     // Handles any error that occurred in the try block
     console.error("An error occurred:", error.message);
   } finally {
-    await auditDYIDocx(doc, businessName, businessUrl);
-    await saveDoc(doc, docxFileName);
+    // await auditDYIDocx(doc, businessName, businessUrl);
+    // await saveDoc(doc, docxFileName);
 
-    uploadDocxToGoogleDrive(`${businessName}.docx`, businessName, folder?.id);
-    console.log(folder);
-    if (sheetId && competitorKeywords) {
-      await SERanking(businessUrl, businessName, competitorKeywords, sheetId);
-    }
-    console.log("Final Main Response:::",folder)
-    return {googleDriveLink:folder.url,processReport:process_report};
+    // uploadDocxToGoogleDrive(`${businessName}.docx`, businessName, folder?.id);
+    // console.log(folder);
+    // if (sheetId && competitorKeywords) {
+    //   await SERanking(businessUrl, businessName, competitorKeywords, sheetId);
+    // }
+    // console.log("Final Main Response:::",folder)
+    // return {googleDriveLink:folder.url,processReport:process_report};
   }
 }
 

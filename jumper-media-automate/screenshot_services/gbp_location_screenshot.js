@@ -4,6 +4,7 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 const csv = require("csv-parser");
 const path = require("path");
+const getChromeExecutablePath = require('../utils/detectChromePath')
 
 class GoogleMapsDirectionsScreenshot {
   constructor(options = {}) {
@@ -866,11 +867,10 @@ class GoogleMapsDirectionsScreenshot {
       console.log(`❓ Questions screenshots: ${this.options.questionsScreenshotPath}`);
       console.log(`🔍 Search results screenshots: ${this.options.searchResultsScreenshotPath}`); // NEW
 
+      const chromePath = getChromeExecutablePath();
       const browser = await puppeteer.launch({
         headless: this.options.headless,
-        executablePath:
-        process.env.CHROME_PATH ||
-        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        executablePath:chromePath,
         args: [
           "--start-fullscreen",
           "--no-sandbox",

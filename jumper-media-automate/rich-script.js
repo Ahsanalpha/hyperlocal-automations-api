@@ -240,7 +240,7 @@ try{
 
   // Chrome launch options
   const launchOptions = {
-    executablePath: process.env.CHROME_PATH,
+    executablePath: chromeExecutablePath,
     headless: false,
     args: [
       "--start-maximized",

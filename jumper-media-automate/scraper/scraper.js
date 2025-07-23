@@ -15,6 +15,7 @@ const {
 const {
   InitializeGBPBrowserSearchScreenshot,
 } = require("../screenshot_services/gbp_browser_search_screenshot.js");
+const getChromeExecutablePath = require('../utils/detectChromePath.js')
 
 class EnhancedGBPIframeScraper {
   constructor(options = {}) {
@@ -444,10 +445,11 @@ class EnhancedGBPIframeScraper {
     } else {
       console.log(`📋 GBP URL decoding is DISABLED`);
     }
+    const chromePath = getChromeExecutablePath();
 
     const browser = await puppeteer.launch({
       headless: this.options.headless,
-      executablePath: process.env.CHROME_PATH,
+      executablePath: chromePath,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",

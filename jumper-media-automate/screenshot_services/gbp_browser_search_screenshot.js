@@ -3,6 +3,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const csv = require('csv-parser');
 const { createReadStream } = require('fs');
+const getChromeExecutablePath = require('../utils/detectChromePath')
+
 
 class GoogleBusinessProfileScraper {
   constructor(options = {}) {
@@ -50,11 +52,10 @@ class GoogleBusinessProfileScraper {
 
       // Get default Chrome profile path
       const defaultProfilePath = this.getDefaultProfilePath();
-
+      const chromePath = getChromeExecutablePath();
       this.browser = await puppeteer.launch({
         executablePath:
-          process.env.CHROME_PATH ||
-          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          chromePath,
         headless: false,
         slowMo: this.options.slowMo,
         userDataDir: defaultProfilePath,

@@ -1,10 +1,14 @@
 const puppeteer = require("puppeteer");
 const path = require("path");
 const fs = require("fs");
+const getChromeExecutablePath = require('./utils/detectChromePath')
 
 async function cannibalizationSnapshot(url, customFolder = 'screenshots') {
   let browser;
-  let outputPath
+  let outputPath;
+  let chromePath=getChromeExecutablePath();
+
+
   try {
 
     const screenshotsDir = path.join(process.cwd(), customFolder);
@@ -22,7 +26,7 @@ async function cannibalizationSnapshot(url, customFolder = 'screenshots') {
     const filename = `cannibalization_${timestamp}.png`;
     outputPath = path.join(screenshotsDir, filename)
     browser = await puppeteer.launch({
-      executablePath: process.env.CHROME_PATH,
+      executablePath: chromePath,
       headless: false,
       defaultViewport: null,
       args: ["--start-maximized"]
