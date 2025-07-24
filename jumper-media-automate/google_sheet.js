@@ -207,16 +207,15 @@ async function createGoogleSheetFile(businessUrl, filePath, folderId) {
     console.log("________________pick________________");
     const media = {
       mimeType: "text/csv",
-      body: fs.createReadStream(path.join(__dirname, filePath)),
+      // body: fs.createReadStream(path.join(__dirname, filePath)),
+      body: fs.createReadStream(filePath),
     };
 
-    console.log("________________error________________");
     const file = await drive.files.create({
       resource: fileMetadata,
       media,
       fields: "id",
     });
-    console.log("jaohs");
 
     const fileId = file.data.id;
 
@@ -279,6 +278,9 @@ async function createGoogleSheetFile(businessUrl, filePath, folderId) {
       success: true,
       error: "",
     });
+    if(fileId) {
+      console.log("<<Google sheet file creation success>>")
+    }
     return fileId; // Return the spreadsheet ID
   } catch (error) {
     console.log("___________________GOOGLE SHEET ERROR______________\n");

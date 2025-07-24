@@ -3,7 +3,7 @@ const fs = require('fs');
 function removingFiles(filePath){
 if (fs.existsSync(filePath)) {
   fs.unlinkSync(filePath);
-  console.log('File removed.');
+  console.log(`${filePath} file removed.`);
 } else {
   console.log('File does not exist.');
 }

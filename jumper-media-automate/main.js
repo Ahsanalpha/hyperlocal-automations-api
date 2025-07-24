@@ -68,6 +68,8 @@ const {
   createJsonLogFile,
   appendToLogReport,
 } = require("./processing_report/process_report");
+
+const fs = require('fs').promises;
 var rich_url;
 var sheetId = null;
 var redirections = null;
@@ -97,7 +99,7 @@ function extractTextFromDocChildren(doc) {
 
 async function main(
   auditBusinessName = "mauibraces",
-  auditBusinessUrl = "https://www.mauibraces.com/"
+  auditBusinessUrl = "https://www.mauibraces.com"
 ) {
   // https://squeegeedetail.com/
   const businessName = auditBusinessName;
@@ -107,68 +109,72 @@ async function main(
   const process_report = createJsonLogFile(businessName);
   try {
 
-    // folder = await createGoogleDriveFolder(businessName);
+    folder = await createGoogleDriveFolder(businessName);
 
     // console.log("_______________________rich_script______________________\n");
     // rich_url = await InitializeRichResultsScript(businessUrl);
 
     // console.log("_______________________Internal_all.csv_____________________________\n")
+
     // removingFiles(process.env.SCREAM_FROG_CSV_FILE);
-    // await runScreamingFrog(businessUrl);
+    // await runScreamingFrog(businessUrl,'./jumper-media-automate');
 
 
-    // console.log("_______________________Response Codes:Internal & External:Client Error (4xx) Inlinks_____________________________\n")
-    // removingFiles("client_error_(4xx)_inlinks.csv");
+    // console.log("\n_______________________Response Codes:Internal & External:Client Error (4xx) Inlinks_____________________________\n")
+    // removingFiles("./jumper-media-automate/client_error_(4xx)_inlinks.csv");
     // await runScreamingFrog(
     //   businessUrl,
+    //   './jumper-media-automate',
     //   "Response Codes:Internal & External:Client Error (4xx) Inlinks",
     //   "bulk-export"
     // );
+    // console.log("\n_______________________Response Codes:Redirection (3xx)_____________________________\n")
+    // removingFiles("./jumper-media-automate/response_codes_redirection_(3xx).csv");
+    // await runScreamingFrog(businessUrl,
+    //   './jumper-media-automate' ,
+    //   "Response Codes:Redirection (3xx)");
 
-    // console.log("_______________________Response Codes:Redirection (3xx)_____________________________\n")
-    // removingFiles("response_codes_redirection_(3xx).csv");
-    // await runScreamingFrog(businessUrl, "Response Codes:Redirection (3xx)");
+    if (checkFileExistence(process.env.SCREAM_FROG_CSV_FILE)) {
+      sheetId = await createGoogleSheetFile(
+        businessUrl,
+        process.env.SCREAM_FROG_CSV_FILE,
+        folder?.id
+      );
+    }
 
-    // if (checkFileExistence(process.env.SCREAM_FROG_CSV_FILE)) {
-    //   sheetId = await createGoogleSheetFile(
-    //     businessUrl,
-    //     process.env.SCREAM_FROG_CSV_FILE,
-    //     folder?.id
-    //   );
+
+    // // dataforseo section for Competitor_Comparison and Keyword Research Tables
+    // await ensureDirectoryExists('./jumper-media-automate/data_for_seo_reports')
+    // const locationCode = await getLocationCode("https://squeegeedetail.com")
+    // const highestRankingKeyword = await extractHighestSearchVolumeKeyword(
+    //   auditBusinessUrl
+    // );
+
+    // if (highestRankingKeyword) {
+    //   console.log("Returned highest ranking keyword:::", highestRankingKeyword);
+    //   competitor = await getHigestPerformingCompetitors(highestRankingKeyword,auditBusinessUrl);
+    // }
+    // console.log("Returned Competitor:::", competitor);
+    // if (competitor) {
+    //   competitorKeywords = await getCompetitorKeywords(competitor);
+    //   console.log("Returned competitor keywords:::", competitorKeywords);
     // }
 
+    // // storing competitor_comparison table
+    // if (sheetId) {
+    //   await storeCSVInGoogleSheet(
+    //     sheetId,
+    //     "./jumper-media-automate/data_for_seo/Competitor_Comparison.csv",
+    //     "Competitor_Comparison.csv"
+    //   );
+      // const returnedURL = await storeCSVInGoogleSheet(
+      //   sheetId,
+      //   "./jumper-media-automate/data_for_seo/Keyword_Research.csv",
+      //   "Keyword_Research.csv"
+      // );
+    //   console.log("Returned Competitor Comparison sheet URL:::", returnedURL);
+    // }
 
-    // console.log(folder)
-    const locationCode = await getLocationCode("https://squeegeedetail.com")
-    const highestRankingKeyword = await extractHighestSearchVolumeKeyword(
-      auditBusinessUrl
-    );
-
-    if (highestRankingKeyword) {
-      console.log("Returned highest ranking keyword:::", highestRankingKeyword);
-      competitor = await getHigestPerformingCompetitors(highestRankingKeyword,auditBusinessUrl);
-    }
-    console.log("Returned Competitor:::", competitor);
-    if (competitor) {
-      competitorKeywords = await getCompetitorKeywords(competitor);
-      console.log("Returned competitor keywords:::", competitorKeywords);
-    }
-
-    return 
-    // storing competitor_comparison table
-    if (sheetId) {
-      await storeCSVInGoogleSheet(
-        sheetId,
-        "Competitor_Comparison.csv",
-        "Competitor_Comparison.csv"
-      );
-      const returnedURL = await storeCSVInGoogleSheet(
-        sheetId,
-        "Keyword_Research.csv",
-        "Keyword_Research.csv"
-      );
-      console.log("Returned Competitor Comparison sheet URL:::", returnedURL);
-    }
 
     console.log("______________________________cleanup______________\n");
 
@@ -176,28 +182,30 @@ async function main(
       cleanup_data = await cleanup(
         sheetId,
         process.env.SCREAM_FROG_CSV_FILE,
-        "URL,Title,H1,Desc.csv"
+        "URL-Title-H1-Desc.csv"
       );
 
       cleanup_url = cleanup_data.cleanup_url;
       totalCount = cleanup_data.totalCount;
 
+      return 
       broken_link_url = await broken_links(
         sheetId,
-        "client_error_(4xx)_inlinks.csv",
-        "broken_links.csv"
+        "./jumper-media-automate/client_error_(4xx)_inlinks.csv",
+        "./jumper-media-automate/broken_links.csv"
       );
       console.log(
         "_____________________________BrokenLink end__________________\n"
       );
+
 
       console.log(
         "_____________________________Redirections start___________________\n"
       );
       redirections = await redirect_links(
         sheetId,
-        "response_codes_redirection_(3xx).csv",
-        "redirections.csv"
+        "./jumper-media-automate/response_codes_redirection_(3xx).csv",
+        "./jumper-media-automate/redirections.csv"
       );
       console.log(
         "_____________________________Redirections end___________________\n"
@@ -209,28 +217,28 @@ async function main(
       cannibalization = await canniblization(
         sheetId,
         "URL,Title,H1,Desc.csv",
-        "cannibalization.csv"
+        "./jumper-media-automate/cannibalization.csv"
       );
       console.log(
         "_____________________________Cannibalization end___________________\n"
       );
     }
     //this is very useful because it generate gbp_output_data/gbp_enchanced.csv
-    //     console.log("_____________________________Scraping start___________________\n")
-    // await InitializeEnhancedGBPScraper()
-    //     console.log("_____________________________Scraping end___________________\n")
+        console.log("_____________________________Scraping start___________________\n")
+    await InitializeEnhancedGBPScraper()
+        console.log("_____________________________Scraping end___________________\n")
 
-    // await auditIntroductionDocx(doc, businessName, businessUrl); //todo need to automate
+    await auditIntroductionDocx(doc, businessName, businessUrl); //todo need to automate
 
-    // await auditKWResearchDocx(doc, businessName, businessUrl); //todo need to automate
+    await auditKWResearchDocx(doc, businessName, businessUrl); //todo need to automate
 
-    // await auditTechnicalSEODocx(doc, businessName, businessUrl); //todo need to automate
+    await auditTechnicalSEODocx(doc, businessName, businessUrl); //todo need to automate
 
-    // await auditOnPageSEODocx(doc, businessName, businessUrl); //todo need to automate
+    await auditOnPageSEODocx(doc, businessName, businessUrl); //todo need to automate
 
-    // await auditOffPageSEODocx(doc, businessName, businessUrl); //todo need to automate
+    await auditOffPageSEODocx(doc, businessName, businessUrl); //todo need to automate
 
-    // await auditGBPDocx(doc, businessName, businessUrl); //todo need to automate
+    await auditGBPDocx(doc, businessName, businessUrl); //todo need to automate
   } catch (error) {
     // Handles any error that occurred in the try block
     console.error("An error occurred:", error.message);
@@ -253,7 +261,14 @@ if(require.main == module) {
 }
 
 
-
+async function ensureDirectoryExists(dirPath) {
+    try {
+      await fs.access(dirPath);
+    } catch {
+      await fs.mkdir(dirPath, { recursive: true });
+      console.log(`📂 Created directory: ${dirPath}`);
+    }
+  }
 
 
 
@@ -827,7 +842,7 @@ async function auditTechnicalSEODocx(doc, businessName, businessUrl) {
     "____________________Response Codes:Client Error (4xx)_______________\n"
   );
   removingFiles("response_codes_client_error_(4xx).csv");
-  await runScreamingFrog(businessUrl, "Response Codes:Client Error (4xx)");
+  await runScreamingFrog(businessUrl,'./jumper-media-automate', "Response Codes:Client Error (4xx)");
 
   let object = await csvToJsonWithHeaders(
     "response_codes_client_error_(4xx).csv",

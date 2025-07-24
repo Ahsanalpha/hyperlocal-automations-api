@@ -7,7 +7,7 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const { storeCSVInGoogleSheet }=require("./google_sheet")
 
 
-  async function cleanup(sheetId,filePath = 'internal_all.csv',outputFileName='filtered_output.csv') {
+  async function cleanup(sheetId,filePath = './jumper-media-automate/internal_all.csv',outputFileName='./jumper-media-automate/filtered_output.csv') {
     const records = [];
     
     return new Promise((resolve, reject) => {
@@ -43,7 +43,6 @@ const { storeCSVInGoogleSheet }=require("./google_sheet")
               { id: 'H1-1', title: 'H1-1' },
               { id: 'H1-2', title: 'H1-2' },
               { id: 'H2-1', title: 'H2-1' },
-          
               { id: 'Status Code', title: 'Status Code' },
               { id: 'Indexability', title: 'Indexability' },
             ];
@@ -58,7 +57,7 @@ const { storeCSVInGoogleSheet }=require("./google_sheet")
   
             await goodWriter.writeRecords(records);
            
-            // console.log('✔ filtered_output.csv written.');
+            console.log('✔ filtered_output.csv written.');
   
             // Store in Google Sheets and return the URL
             const url = await storeCSVInGoogleSheet(sheetId,outputFileName,outputFileName);

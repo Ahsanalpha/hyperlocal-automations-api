@@ -8,7 +8,7 @@ const {appendToLogReport } = require("./processing_report/process_report")
  * @param {string} configPath - Path to the SEO Spider config file.
  * @returns {Promise<string>} - Resolves with stdout or rejects on error.
  */
-function runScreamingFrog(url = '',export_tab_command = 'Internal:All',export_tab='export-tabs',configPath = process.env.SCREAMING_FROG_CONFIG) {
+function runScreamingFrog(url = '',outputFolder,export_tab_command = 'Internal:All',export_tab='export-tabs',configPath = process.env.SCREAMING_FROG_CONFIG) {
     let screamingFrogPath;
     const platform = os.platform(); 
     switch(platform) {
@@ -19,15 +19,15 @@ function runScreamingFrog(url = '',export_tab_command = 'Internal:All',export_ta
             screamingFrogPath = process.env.SCREAMING_FROG_PATH_LINUX;
             break;
         case "darwin":
-            screamingFrogPath = process.env.SCREAMING_FROG_PATH_MACOS;
+            screamingFrogPath = process.env.SCREAMING_FROG_PATH_MACOS; 
     }
 
-console.log(screamingFrogPath)
   const command = `"${screamingFrogPath}" \
     --crawl "${url}" \
     --headless \
     --${export_tab} "${export_tab_command}" \
     --export-format csv \
+    --output-folder "${outputFolder}"
     `;
 
   return new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ console.log(screamingFrogPath)
       appendToLogReport({source:"ScreamingFrog",puprose:export_tab,success:true,error:''})
       resolve(stdout);
     });
-  });
+  })
 }
 
 if(require.main === module) {

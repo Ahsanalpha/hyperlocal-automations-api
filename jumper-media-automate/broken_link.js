@@ -6,7 +6,7 @@ const csv = require('csv-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const { storeCSVInGoogleSheet } = require("./google_sheet");
 
-async function broken_links(sheetId, filePath = 'internal_all.csv', outputFileName = 'redirect_links.csv') {
+async function broken_links(sheetId, filePath = './jumper-media-automate/internal_all.csv', outputFileName = './jumper-media-automate/redirect_links.csv') {
   const redirectLinks = [];
   const headersSet = new Set();
 

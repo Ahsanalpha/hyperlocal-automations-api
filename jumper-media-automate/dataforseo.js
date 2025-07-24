@@ -3,7 +3,7 @@ const { URL } = require("url");
 const { createReadStream } = require('fs');
 const csv = require('csv-parser')
 require("dotenv").config();
-
+const fs = require('fs').promises
 const domain = "https://api.dataforseo.com/v3";
 const getRecords = async () => {
   const records = await readCsvFile('jumper-media-automate/gbp_output_data/gbp_enhanced_records.csv');
@@ -46,7 +46,7 @@ async function getAllLocations(records) {
           "Location_Type",
         ],
         filteredUSRegionsArray,
-        "Fetched_Serp_Locations.csv",
+        "./jumper-media-automate/data_for_seo_reports/Fetched_Serp_Locations.csv",
         ","
       );
       console.log("Created Fetched_Serp_Locations Successfully!");
@@ -102,7 +102,6 @@ async function extractHighestSearchVolumeKeyword(rawUrl) {
   return await axios({
     method: "post",
     url: `${domain}/dataforseo_labs/google/keywords_for_site/live`,
-    
     auth: returnAuth(),
     data: [
       {
@@ -213,7 +212,7 @@ async function getHigestPerformingCompetitors(rankingKeyword, rawURL, locationCo
         "Domain Rating",
       ],
       competitorComparisonDataArray,
-      "Competitor_Comparison.csv",
+      "./jumper-media-automate/data_for_seo_reports/Competitor_Comparison.csv",
       ","
     );
 
@@ -279,7 +278,7 @@ async function getCompetitorKeywords(competitorURL,locationCode=2840) {
           "Ranking Page",
         ],
         structuredCompetitorKeywordsData,
-        "Keyword_Research.csv",
+        "./jumper-media-automate/data_for_seo_reports/Keyword_Research.csv",
         ","
       );
 
@@ -298,9 +297,19 @@ function returnAuth() {
   };
 }
 
+async function ensureDirectoryExists(dirPath) {
+    try {
+      await fs.access(dirPath);
+    } catch {
+      await fs.mkdir(dirPath, { recursive: true });
+      console.log(`📂 Created directory: ${dirPath}`);
+    }
+  }
+
 if (require.main === module) {
   // extractHighestSearchVolumeKeyword('https://squeegeedetail.com')
   (async () => {
+    await ensureDirectoryExists('jumper-media-automate/data_for_seo_reports')
     const locationCode = await getLocationCode("https://squeegeedetail.com")
     console.log("Final Location Code:::",locationCode)
     const highestRankingKeyword = await extractHighestSearchVolumeKeyword(
@@ -310,10 +319,10 @@ if (require.main === module) {
     const competitors = await getHigestPerformingCompetitors(
       "car detailing portland",
       "https://squeegeedetail.com",
-      locationCode
+      
     );
     console.log("Returned Competitor:::", competitors);
-    const competitorKeywords = await getCompetitorKeywords("washmanusa.com",locationCode);
+    const competitorKeywords = await getCompetitorKeywords("dapperpros.com");
     console.log("Returned competitor keywords:::", competitorKeywords);
   })();
 }
