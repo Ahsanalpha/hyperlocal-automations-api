@@ -4,6 +4,7 @@ const readline = require('readline');
 const fs = require('fs');
 const csv = require('csv-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+
 const { storeCSVInGoogleSheet }=require("./google_sheet")
 
 
@@ -58,11 +59,13 @@ const { storeCSVInGoogleSheet }=require("./google_sheet")
   
             await goodWriter.writeRecords(records);
            
-            // console.log('✔ filtered_output.csv written.');
+            console.log('✔ filtered_output.csv written.');
   
+            console.log(path.join(__dirname,`../${outputFileName}`))
             // Store in Google Sheets and return the URL
-            const url = await storeCSVInGoogleSheet(sheetId,outputFileName,outputFileName);
-
+            const url = await storeCSVInGoogleSheet(sheetId,path.join(__dirname,`../${outputFileName}`),outputFileName);
+console.log("URL google sheet")
+console.log(url)
             resolve({cleanup_url:url,totalCount:records.length});
             
           } catch (error) {

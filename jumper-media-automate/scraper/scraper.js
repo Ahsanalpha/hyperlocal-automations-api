@@ -529,8 +529,9 @@ class EnhancedGBPIframeScraper {
  * Main execution function with enhanced features
  */
 async function InitializeEnhancedGBPScraper() {
-  if (!fs.existsSync("gbp_output_data")) {
-    fs.mkdirSync("gbp_output_data");
+  
+  if (!fs.existsSync(path.join(__dirname,"../gbp_output_data"))) {
+    fs.mkdirSync(path.join(__dirname,"../gbp_output_data"));
     console.log("📁 Created gbp_output_data directory");
   }
 
@@ -541,10 +542,12 @@ async function InitializeEnhancedGBPScraper() {
     enableDecoding: true, // Enable GBP URL decoding
   });
 
+  
+
   try {
     await scraper.scrape(process.env.SCREAM_FROG_CSV_FILE, {
       columnName: "Address",
-      outputPath: "jumper-media-automate/gbp_output_data/gbp_enhanced_records.csv",
+      outputPath: path.join(__dirname,"../gbp_output_data/gbp_enhanced_records.csv"),
     });
 
     console.log("\n🎉 Enhanced process completed successfully!");
@@ -558,7 +561,7 @@ async function InitializeEnhancedGBPScraper() {
     );
   } catch (error) {
     console.error("Process failed:", error);
-    process.exit(1);
+    // process.exit(1);
   }
 }
 

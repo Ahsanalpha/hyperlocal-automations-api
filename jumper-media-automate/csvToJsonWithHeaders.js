@@ -10,7 +10,8 @@ const path = require('path');
  * @returns {Promise<{ headers: string[], jsonArray: object[] }>}
  */
 async function csvToJsonWithHeaders(fileName, columnsToRemove = []) {
-    const csvFilePath = path.join(__dirname, fileName);
+    const csvFilePath = fileName;
+    console.log("CSVFILEPATH",csvFilePath)
   
     try {
       const jsonArray = await csv().fromFile(csvFilePath);

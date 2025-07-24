@@ -57,7 +57,7 @@ async function broken_links(sheetId, filePath = 'internal_all.csv', outputFileNa
           });
 
           await writer.writeRecords(redirectLinks);
-          const url = await storeCSVInGoogleSheet(sheetId, outputFileName, outputFileName);
+          const url = await storeCSVInGoogleSheet(sheetId, path.join(__dirname,`../${outputFileName}`), outputFileName);
           resolve(url);
         } catch (error) {
           reject(error);

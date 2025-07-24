@@ -2,10 +2,12 @@ const { createCSVAsync } = require("./csv-writer");
 const { URL } = require("url");
 const { createReadStream } = require('fs');
 const csv = require('csv-parser')
+const path = require("path");
 require("dotenv").config();
 
 const domain = "https://api.dataforseo.com/v3";
 const getRecords = async () => {
+  console.log(path.join(__dirname))
   const records = await readCsvFile('jumper-media-automate/gbp_output_data/gbp_enhanced_records.csv');
   return records;
 }
@@ -137,12 +139,17 @@ async function extractHighestSearchVolumeKeyword(rawUrl) {
     });
 }
 
-async function getHigestPerformingCompetitors(rankingKeyword, rawURL, locationCode) {
+async function getHigestPerformingCompetitors(rankingKeyword, rawURL="https://www.mauibraces.com/", locationCode) {
   const axios = require("axios");
 
   try {
-    const processedName = new URL(rawURL).hostname;
 
+
+    console.log("Issue with URL?????????????????????")
+    const processedName = new URL(rawURL)?.hostname;
+
+    console.log("Not in API")
+    console.log(`${domain}/serp/google/organic/live/advanced`)
     const response = await axios({
       method: "post",
       url: `${domain}/serp/google/organic/live/advanced`,
@@ -160,6 +167,7 @@ async function getHigestPerformingCompetitors(rankingKeyword, rawURL, locationCo
         "content-type": "application/json",
       },
     });
+
 
     const comparisonKeywordsArray = response?.data?.tasks?.[0]?.result?.[0]?.items
       ?.filter((comparisonKeyword) => {
@@ -213,7 +221,7 @@ async function getHigestPerformingCompetitors(rankingKeyword, rawURL, locationCo
         "Domain Rating",
       ],
       competitorComparisonDataArray,
-      "Competitor_Comparison.csv",
+      "jumper-media-automate/Competitor_Comparison.csv",
       ","
     );
 
@@ -279,7 +287,7 @@ async function getCompetitorKeywords(competitorURL,locationCode) {
           "Ranking Page",
         ],
         structuredCompetitorKeywordsData,
-        "Keyword_Research.csv",
+        "jumper-media-automate/Keyword_Research.csv",
         ","
       );
 

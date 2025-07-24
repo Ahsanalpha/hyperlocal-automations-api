@@ -24,6 +24,8 @@ class GBPIframeProcessor {
       console.log("Initializing browser...");
 
       this.browser = await puppeteer.launch({
+        executablePath:
+        process.env.CHROME_PATH,
         headless: "new",
         args: [
           "--no-sandbox",

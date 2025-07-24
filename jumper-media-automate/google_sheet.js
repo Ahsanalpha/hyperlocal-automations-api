@@ -5,6 +5,7 @@ const path = require("path");
 const { parse } = require("csv-parse/sync");
 // Load OAuth2 client
 const { appendToLogReport } = require("./processing_report/process_report");
+const { file } = require("googleapis/build/src/apis/file");
 const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
 const TOKEN_PATH = process.env.TOKEN_PATH;
 
@@ -108,10 +109,13 @@ async function authenticate() {
 async function uploadCSVAsGoogleSheet(auth, fileId, filePath, sheetName) {
   const sheets = google.sheets({ version: "v4", auth });
 
+  console.log("filePath uplaod")
+  console.log(filePath)
+
   // const content = fs.readFileSync(path.join(__dirname, filePath));
   // const rows = parse(content, { skip_empty_lines: true });
   // 1. Read and properly parse the CSV
-  const content = fs.readFileSync(path.join(__dirname, filePath), "utf8");
+  const content = fs.readFileSync(filePath, "utf8");
 
   // Remove UTF-8 BOM if present and parse
   const rows = parse(content.replace(/^\uFEFF/, ""), {
@@ -204,13 +208,13 @@ async function createGoogleSheetFile(businessUrl, filePath, folderId) {
       parents: [folderId],
     };
 
-    console.log("________________pick________________");
+
     const media = {
       mimeType: "text/csv",
-      body: fs.createReadStream(path.join(__dirname, filePath)),
+      body: fs.createReadStream(filePath),
     };
 
-    console.log("________________error________________");
+    
     const file = await drive.files.create({
       resource: fileMetadata,
       media,
@@ -350,6 +354,9 @@ async function uploadDocxToGoogleDrive(filePath, fileName, folderId) {
   try {
     const auth = await authenticate();
     const drive = google.drive({ version: "v3", auth });
+
+    console.log("_____________path uplaod docx________________")
+    console.log(filePath)
 
     const fileMetadata = {
       name: fileName,

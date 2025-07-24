@@ -25,7 +25,7 @@ class UserRoutes {
       console.log("hitted automations endpoint")
       // Check for header
       if (apiKey !== API_KEY) {
-        console.log("Invalid API key",api-key)
+        console.log("Invalid API key",apiKey)
         return res.status(403).json({ error: "Forbidden: Invalid API Key" });
       }
 
@@ -44,7 +44,7 @@ class UserRoutes {
         console.log("Audit Main Response:::",workflowResponse)
         res.status(200).json({succcess:true,googleDriveUrl:workflowResponse.googleDriveLink,processReport:workflowResponse.processReport});
         console.log(`Successfully ran the audit for ${auditBusinessUrl}`);
-        console.log(`Google Doc for ${auditBusinessName}: ${googleDocUrl}`);
+        // console.log(`Google Doc for ${auditBusinessName}: ${googleDocUrl}`);
       } catch (error) {
         console.log("Error running main():", error);
         res.status(500).json({ error: "Internal Server Error" });

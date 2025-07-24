@@ -69,7 +69,7 @@ const { storeCSVInGoogleSheet }=require("./google_sheet")
             // console.log('✔ redirect_links.csv written.');
   
             // Store in Google Sheets and return the URL
-            const url = await storeCSVInGoogleSheet(sheetId,outputFileName,outputFileName);
+            const url = await storeCSVInGoogleSheet(sheetId,path.join(__dirname,`../${outputFileName}`),outputFileName);
             resolve(url);
       
             // resolve("need to uncomment")

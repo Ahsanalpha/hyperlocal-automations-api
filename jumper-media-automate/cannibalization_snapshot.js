@@ -7,6 +7,8 @@ async function cannibalizationSnapshot(url, customFolder = 'screenshots') {
   let outputPath
   try {
 
+    console.log(url)
+
     const screenshotsDir = path.join(process.cwd(), customFolder);
     if (!fs.existsSync(screenshotsDir)) {
       fs.mkdirSync(screenshotsDir, { recursive: true });

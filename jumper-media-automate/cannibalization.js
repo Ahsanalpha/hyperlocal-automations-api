@@ -97,7 +97,7 @@ fs.writeFileSync(outputFile, finalCsv, 'utf8');
 
     // fs.writeFileSync(outputFile, resultText);
 
-    let url = await storeCSVInGoogleSheet(sheetId,outputFile,outputFile);
+    let url = await storeCSVInGoogleSheet(sheetId,path.join(__dirname,`../${outputFile}`),outputFile);
 
     return url;
 
